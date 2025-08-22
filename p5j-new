@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Check if project name was provided
+if [ $# -eq 0 ]; then
+    echo "Usage: p5j-new <project-name>"
+    exit 1
+fi
+
+PROJECT_NAME="$1"
+PROCESSING_BASE_DIR="/opt/processing"
+TEMPLATE_DIR="$PROCESSING_BASE_DIR/template"
+CORE_JAR_CONFIG="$PROCESSING_BASE_DIR/processing-core-jar-path"
+
+# Check if template directory exists
+if [ ! -d "$TEMPLATE_DIR" ]; then
+    echo "Error: Template directory not found at $TEMPLATE_DIR"
+    exit 1
+fi
+
+# Check if core JAR path is saved
+if [ ! -f "$CORE_JAR_CONFIG" ]; then
+    echo "Error: Processing core JAR path not found. Please run init.sh first."
+    exit 1
+fi
+
+CORE_JAR_PATH=$(cat "$CORE_JAR_CONFIG")
+
+# Verify the core JAR still exists at the saved path
+if [ ! -f "$CORE_JAR_PATH" ]; then
+    echo "Error: Processing core JAR not found at: $CORE_JAR_PATH"
+    echo "Please run init.sh again to update the path."
+    exit 1
+fi
+
+# Ensure project path does not already exist
+if [ -e "$PROJECT_NAME" ]; then
+    echo "Error: Path '$PROJECT_NAME' already exists"
+    exit 1
+fi
+
+echo "Creating Processing Java project: $PROJECT_NAME"
+
+# Create the project directory
+mkdir -p "$PROJECT_NAME"
+
+# Copy template contents recursively, including hidden files/dirs
+cp -R "$TEMPLATE_DIR"/. "$PROJECT_NAME/"
+
+# Rename _classpath to .classpath if present
+if [ -e "$PROJECT_NAME/_classpath" ]; then
+    if [ -e "$PROJECT_NAME/.classpath" ]; then
+        rm -f "$PROJECT_NAME/_classpath"
+    else
+        mv "$PROJECT_NAME/_classpath" "$PROJECT_NAME/.classpath"
+    fi
+fi
+
+# Create lib directory if it doesn't exist
+mkdir -p "$PROJECT_NAME/lib"
+
+# Copy Processing core JAR to project lib directory
+cp "$CORE_JAR_PATH" "$PROJECT_NAME/lib/core.jar"
+
+echo "✓ Created project directory: $PROJECT_NAME/"
+echo "✓ Copied template files"
+echo "✓ Copied Processing core.jar to $PROJECT_NAME/lib/core.jar"
+echo ""
+echo "Project '$PROJECT_NAME' created successfully!"
+echo "You can now cd into '$PROJECT_NAME' and start coding."
