@@ -1,0 +1,47 @@
+name: Test Scripts
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Make scripts executable
+      run: |
+        chmod +x init.sh
+        chmod +x p5j-new
+
+    - name: Test init.sh installation
+      run: |
+        sudo ./init.sh
+
+    - name: Verify Processing installation
+      run: |
+        test -f /usr/local/bin/processing
+        test -d /opt/processing/processing-*
+        test -f /opt/processing/p5j-new
+        test -f /usr/local/bin/p5j-new
+        test -d /opt/processing/template
+
+    - name: Test p5j-new project creation
+      run: |
+        cd /tmp
+        p5j-new test-project
+
+    - name: Verify project structure
+      run: |
+        test -d /tmp/test-project
+        test -f /tmp/test-project/src/App.java
+        test -f /tmp/test-project/lib/core.jar
+        test -f /tmp/test-project/.classpath
+
+    - name: Compile test project
+      run: |
+        cd /tmp/test-project
+        javac -cp lib/core.jar src/App.java
