@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Config
-URL="https://github.com/processing/processing4/releases/download/processing-1306-4.4.6/processing-4.4.6-linux-x64-portable.zip"
+URL="${URL:-https://github.com/processing/processing4/releases/download/processing-1306-4.4.6/processing-4.4.6-linux-x64-portable.zip}"
 
 # Extract version from URL (matches patterns like 4.4.6)
 VERSION=$(echo "$URL" | grep -oE 'processing-[0-9]+\.[0-9]+\.[0-9]+' | tail -1 | cut -d'-' -f2)
