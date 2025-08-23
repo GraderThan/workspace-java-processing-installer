@@ -24,7 +24,7 @@ jobs:
     - name: Verify Processing installation
       run: |
         test -f /usr/local/bin/processing
-        test -d /opt/processing/processing-*
+        ls -d /opt/processing/processing-* >/dev/null 2>&1
         test -f /opt/processing/p5j-new
         test -f /usr/local/bin/p5j-new
         test -d /opt/processing/template
