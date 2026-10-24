@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-linux:
-    runs-on: ubuntu-latest
+    runs-on: gt-aws-x64-2c
     steps:
     - uses: actions/checkout@v4
 

@@ -1,0 +1,3 @@
+self-hosted-runner:
+  labels:
+    - gt-aws-x64-2c
